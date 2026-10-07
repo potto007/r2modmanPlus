@@ -119,5 +119,28 @@ export type SettingsMessageFormat = {
             current: string;
         },
         updateAllMods: SettingsEntry & { status: string; },
+        githubAccount: SettingsEntry & {
+            tokenLabel: string;
+            tokenPlaceholder: string;
+            tokenSet: string;
+            repositoryLabel: string;
+            repositoryPlaceholder: string;
+            save: string;
+            clear: string;
+            test: string;
+            testing: string;
+            testSuccess: string;
+            repositoryAccessible: string;
+            private: string;
+            public: string;
+            readOnlyWarning: string;
+        },
+        profileSync: SettingsEntry & {
+            open: string;
+            linked: string;
+            notLinked: string;
+            pullBeforeLaunch: string;
+        },
+        installFromGithub: SettingsEntry,
     }
 };

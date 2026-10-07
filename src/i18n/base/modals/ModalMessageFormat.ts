@@ -284,6 +284,7 @@ export type ModalMessageFormat = {
                     notFoundDisclaimer: string;
                     ensureCorrectProfile: string;
                     packagesWillBeInstalled: string;
+                    githubPackages: string;
                 },
                 actions: {
                     acknowledgement: string;
@@ -326,6 +327,7 @@ export type ModalMessageFormat = {
                     applyChanges: string,
                     copyingModsToProfile: string;
                     copyingConfigsToProfile: string;
+                    installingGithubMods: string;
                 },
                 content: {
                     waitMessage: string;
@@ -348,5 +350,88 @@ export type ModalMessageFormat = {
     },
     actions: {
         close: string;
+    },
+    githubModImport: {
+        title: string;
+        description: string;
+        repositoryPlaceholder: string;
+        fetchReleases: string;
+        loading: string;
+        noReleases: string;
+        releaseLabel: string;
+        assetLabel: string;
+        noAssets: string;
+        prerelease: string;
+        install: string;
+        installing: string;
+    },
+    profileSync: {
+        title: string;
+        linkedTo: string;
+        lastSynced: string;
+        notLinked: string;
+        willLinkTo: string;
+        noRepository: string;
+        status: {
+            OFF: string;
+            SYNCED: string;
+            LOCAL_CHANGES: string;
+            REMOTE_CHANGES: string;
+            CONFLICT: string;
+            MISSING: string;
+        },
+        statusHelp: {
+            OFF: string;
+            SYNCED: string;
+            LOCAL_CHANGES: string;
+            REMOTE_CHANGES: string;
+            CONFLICT: string;
+            MISSING: string;
+        },
+        phases: {
+            idle: string;
+            refreshing: string;
+            exporting: string;
+            uploading: string;
+            downloading: string;
+            resolvingMods: string;
+            downloadingMods: string;
+            applying: string;
+        },
+        actions: {
+            refresh: string;
+            link: string;
+            push: string;
+            forcePush: string;
+            pull: string;
+            unlink: string;
+            unlinkAndDelete: string;
+            clone: string;
+            cancel: string;
+            overwriteRemote: string;
+            replaceLocal: string;
+        },
+        remoteExists: {
+            description: string;
+        },
+        conflict: {
+            description: string;
+        },
+        confirmPull: {
+            description: string;
+        },
+        confirmUnlink: {
+            description: string;
+        },
+        clone: {
+            description: string;
+            loading: string;
+            noRemoteProfiles: string;
+            remoteLabel: string;
+            localNameLabel: string;
+        },
+        unknownMods: {
+            description: string;
+        },
     },
 }

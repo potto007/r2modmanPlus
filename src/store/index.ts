@@ -6,6 +6,8 @@ import ModalsModule, { State as ModalsState } from './modules/ModalsModule';
 import ModFilterModule, { State as ModFilterState } from './modules/ModFilterModule';
 import ProfileModule, { State as ProfileState } from './modules/ProfileModule';
 import ProfileExportModule, { State as ProfileExportState } from './modules/ProfileExportModule';
+import ProfileSyncModule, { State as ProfileSyncState } from './modules/ProfileSyncModule';
+import GitHubModsModule, { State as GitHubModsState } from './modules/GitHubModsModule';
 import { ProfilesModule, State as ProfilesState } from './modules/ProfilesModule';
 import { TsModsModule, State as TsModsState } from './modules/TsModsModule';
 import { FolderMigration } from '../migrations/FolderMigration';
@@ -29,6 +31,8 @@ export interface State {
     download: DownloadState;
     error: ErrorState;
     profileExport: ProfileExportState;
+    profileSync: ProfileSyncState;
+    githubMods: GitHubModsState;
     ecosystemUpdate: EcosystemUpdateState;
     profiles: ProfilesState;
     splash: SplashState;
@@ -145,6 +149,8 @@ export const store = {
         profiles: ProfilesModule,
         tsMods: TsModsModule,
         profileExport: ProfileExportModule,
+        profileSync: ProfileSyncModule,
+        githubMods: GitHubModsModule,
         splash: SplashModule,
     },
 

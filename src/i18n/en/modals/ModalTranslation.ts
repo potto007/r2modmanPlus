@@ -304,6 +304,7 @@ export const ModalTranslation: ModalMessageFormat = {
                     notFoundDisclaimer: 'These packages in the profile were not found on Thunderstore and will not be installed:',
                     ensureCorrectProfile: 'Ensure the profile is intended for the currently selected game.',
                     packagesWillBeInstalled: 'These packages will be installed:',
+                    githubPackages: 'These packages will be installed from GitHub releases. Private repositories need a token with access, see the settings:',
                 },
                 actions: {
                     acknowledgement: 'I understand that some of the mods won\'t be imported',
@@ -345,7 +346,8 @@ export const ModalTranslation: ModalMessageFormat = {
                     cleaningUp: 'Cleaning up',
                     applyChanges: 'Applying changes to updated profile',
                     copyingModsToProfile: 'Copying mods to profile: {progress}%',
-                    copyingConfigsToProfile: 'Copying configs to profile: {progress}%'
+                    copyingConfigsToProfile: 'Copying configs to profile: {progress}%',
+                    installingGithubMods: 'Installing mods from GitHub: {modName} {progress}%'
 
                 },
                 content: {
@@ -369,5 +371,88 @@ export const ModalTranslation: ModalMessageFormat = {
     },
     actions: {
         close: 'Close',
+    },
+    githubModImport: {
+        title: 'Install mod from GitHub',
+        description: 'Enter a repository as owner/name or paste its URL, then pick a release and the package to install. Private repositories need a GitHub token saved in the settings.',
+        repositoryPlaceholder: 'owner/repository or https://github.com/owner/repository',
+        fetchReleases: 'Fetch releases',
+        loading: 'Loading...',
+        noReleases: 'This repository has no published releases.',
+        releaseLabel: 'Release',
+        assetLabel: 'Package',
+        noAssets: 'This release has no .zip or .dll asset that can be installed.',
+        prerelease: 'pre-release',
+        install: 'Install',
+        installing: 'Installing...',
+    },
+    profileSync: {
+        title: 'Profile sync: {profileName}',
+        linkedTo: 'Linked to {repository} at {path}.',
+        lastSynced: 'Last synced on {formattedDate}.',
+        notLinked: 'This profile is not linked to a repository yet. Link it to upload it, or clone a profile that already exists in the repository.',
+        willLinkTo: 'It will be stored in {repository}.',
+        noRepository: 'No sync repository is configured. Set one under GitHub access in the settings.',
+        status: {
+            OFF: 'Not linked',
+            SYNCED: 'Up to date',
+            LOCAL_CHANGES: 'Local changes',
+            REMOTE_CHANGES: 'Remote changes',
+            CONFLICT: 'Conflict',
+            MISSING: 'Remote missing',
+        },
+        statusHelp: {
+            OFF: '',
+            SYNCED: 'The profile matches the remote snapshot.',
+            LOCAL_CHANGES: 'This profile changed since the last sync. Push to upload it.',
+            REMOTE_CHANGES: 'The remote snapshot changed since the last sync. Pull to apply it.',
+            CONFLICT: 'Both this profile and the remote snapshot changed. Push to keep yours, or pull to take the remote.',
+            MISSING: 'The remote files were deleted. Push to recreate them, or unlink the profile.',
+        },
+        phases: {
+            idle: '',
+            refreshing: 'Checking remote status...',
+            exporting: 'Exporting profile...',
+            uploading: 'Uploading profile...',
+            downloading: 'Downloading...',
+            resolvingMods: 'Resolving mods...',
+            downloadingMods: 'Downloading mods...',
+            applying: 'Applying snapshot to profile...',
+        },
+        actions: {
+            refresh: 'Refresh',
+            link: 'Link and upload',
+            push: 'Push',
+            forcePush: 'Push anyway',
+            pull: 'Pull',
+            unlink: 'Unlink',
+            unlinkAndDelete: 'Unlink and delete remote',
+            clone: 'Clone remote profile',
+            cancel: 'Cancel',
+            overwriteRemote: 'Overwrite remote',
+            replaceLocal: 'Replace this profile with remote',
+        },
+        remoteExists: {
+            description: 'The repository already contains a profile called "{profileName}" for this game. Overwrite it with this profile, or replace this profile with the remote one. Replacing removes mods and config files that are not in the remote snapshot.',
+        },
+        conflict: {
+            description: 'Both this profile and the remote snapshot changed since the last sync. Pushing overwrites the remote with this profile. Pulling replaces this profile with the remote snapshot and discards your local changes.',
+        },
+        confirmPull: {
+            description: 'Pulling rebuilds this profile from the remote snapshot. Mods, enabled state and config files are replaced. Mods imported from local files that are not on GitHub are removed. Continue?',
+        },
+        confirmUnlink: {
+            description: 'Unlinking stops syncing this profile. Deleting the remote also removes it from the repository for everyone who uses it.',
+        },
+        clone: {
+            description: 'Create a new local profile from one stored in the repository and keep it linked.',
+            loading: 'Loading remote profiles...',
+            noRemoteProfiles: 'The repository has no synced profiles for this game.',
+            remoteLabel: 'Remote profile',
+            localNameLabel: 'Local profile name',
+        },
+        unknownMods: {
+            description: 'These mods are in the remote snapshot but could not be found on Thunderstore and were skipped:',
+        },
     },
 }

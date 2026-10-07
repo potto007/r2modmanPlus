@@ -10,8 +10,9 @@ import Dependants from '../../../r2mm/mods/Dependants';
 import { useModIcon } from '../../composables/ModIconComposable';
 import { valueToReadableDate } from '../../../utils/DateUtils';
 import { splitToNameAndVersion } from '../../../utils/DependencyUtils';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { getStore } from '../../../providers/generic/store/StoreProvider';
+import { GitHubRelease } from '../../../r2mm/github/GitHubClient';
 import { State } from '../../../store';
 import { UnsatisfiedDependencies } from '../../../store/modules/ProfileModule';
 import ThunderstoreMod from "../../../model/ThunderstoreMod";
@@ -53,6 +54,21 @@ const unsatisfiedDependencies = computed<UnsatisfiedDependencies | undefined>(()
 );
 const disabledDependencies = computed<ManifestV2[]>(() => unsatisfiedDependencies.value?.disabledDependencies ?? []);
 const missingDependencies = computed<string[]>(() => unsatisfiedDependencies.value?.missingDependencies ?? []);
+
+const githubSource = computed(() => props.mod.getGitHubSource());
+const githubUpdate = computed<GitHubRelease | null>(() => store.getters['githubMods/updateFor'](props.mod));
+
+onMounted(() => {
+    if (githubSource.value !== null) {
+        store.dispatch('githubMods/checkForUpdate', { mod: props.mod });
+    }
+});
+
+function updateFromGitHub() {
+    if (githubSource.value !== null) {
+        store.commit('openGitHubModImportModal', githubSource.value.repository);
+    }
+}
 
 async function disableMod() {
     if (disableChangePending.value) {
@@ -173,6 +189,11 @@ function openReviewModal() {
                     v-tooltip.right="t('translations.pages.manager.installed.localModCard.tooltips.willNotBeUsed')">
                     {{ t('translations.pages.manager.installed.localModCard.labels.disabled') }}
                 </span>
+                <span v-if="githubSource !== null"
+                    class="tag is-dark margin-right margin-right--half-width"
+                    v-tooltip.right="t('translations.pages.manager.installed.localModCard.tooltips.github', { repository: githubSource.repository, tag: githubSource.tag })">
+                    {{ t('translations.pages.manager.installed.localModCard.labels.github') }}
+                </span>
                 <span class="card-title selectable">
                     <component :is="mod.isEnabled() ? 'span' : 'strike'" class="selectable">
                         {{ mod.getDisplayName() }}
@@ -214,6 +235,12 @@ function openReviewModal() {
                 class='card-header-icon'>
                 <i class='fas fa-cloud-upload-alt'
                    v-tooltip.left="t('translations.pages.manager.installed.localModCard.tooltips.updateAvailable')"></i>
+            </span>
+            <span v-if="githubUpdate !== null"
+                @click.prevent.stop="updateFromGitHub()"
+                class='card-header-icon'>
+                <i class='fas fa-cloud-upload-alt'
+                   v-tooltip.left="t('translations.pages.manager.installed.localModCard.tooltips.githubUpdateAvailable', { tag: githubUpdate.tagName })"></i>
             </span>
             <span v-if="disabledDependencies.length || missingDependencies.length"
                 class='card-header-icon'>
@@ -262,6 +289,10 @@ function openReviewModal() {
 
         <button v-if="!isLatestVersion" @click="updateMod()" class='button'>
             {{ t('translations.pages.manager.installed.localModCard.actions.update') }}
+        </button>
+
+        <button v-if="githubUpdate !== null" @click="updateFromGitHub()" class='button'>
+            {{ t('translations.pages.manager.installed.localModCard.actions.updateFromGithub', { tag: githubUpdate.tagName }) }}
         </button>
 
         <button v-if="missingDependencies.length"

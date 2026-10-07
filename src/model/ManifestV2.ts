@@ -6,6 +6,7 @@ import NetworkMode from './enums/NetworkMode';
 import PathResolver from '../r2mm/manager/PathResolver';
 import R2Error from './errors/R2Error';
 import path from '../providers/node/path/path';
+import GitHubModSource from './github/GitHubModSource';
 
 export default class ManifestV2 {
 
@@ -33,6 +34,10 @@ export default class ManifestV2 {
 
     private onlineSource: boolean = false;
     private trustedPackage: boolean = false;
+
+    // Set when the mod was installed from a GitHub release. Serialised to
+    // mods.yml so exports and profile sync can re-install it.
+    private githubSource: GitHubModSource | null = null;
 
     // Intended to be used to import a mod with only minimal fields specified.
     // Should support manifest V1. Defaults to an "Unknown" author field if not found.
@@ -92,6 +97,7 @@ export default class ManifestV2 {
         this.setInstalledAtTime(jsManifestObject.installedAtTime || 0);
         this.setOnlineSource(jsManifestObject.onlineSource || false);
         this.setTrustedPackage(jsManifestObject.trustedPackage || false);
+        this.setGitHubSource(GitHubModSource.fromJsObject(jsManifestObject.githubSource));
         if (!jsManifestObject.enabled) {
             this.disable();
         }
@@ -265,5 +271,17 @@ export default class ManifestV2 {
 
     public setTrustedPackage(trusted: boolean) {
         this.trustedPackage = trusted;
+    }
+
+    public getGitHubSource(): GitHubModSource | null {
+        return this.githubSource;
+    }
+
+    public setGitHubSource(source: GitHubModSource | null) {
+        this.githubSource = source;
+    }
+
+    public isFromGitHub(): boolean {
+        return this.githubSource !== null;
     }
 }

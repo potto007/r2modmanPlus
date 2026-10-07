@@ -26,6 +26,9 @@ import LaunchArguments from './entries/LaunchArguments.vue';
 import ShowDependencyStrings from './entries/ShowDependencyStrings.vue';
 import ResetGameInstallation from './entries/ResetGameInstallation.vue';
 import ChangeLaunchBehaviour from './entries/ChangeLaunchBehaviour.vue';
+import GitHubAccount from './entries/GitHubAccount.vue';
+import ProfileSyncSetting from './entries/ProfileSyncSetting.vue';
+import InstallFromGitHub from './entries/InstallFromGitHub.vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -105,6 +108,8 @@ function isVisible(section: Category): boolean {
                     <ModState :search-term="searchTerm"/>
                     <UpdateAllMods :search-term="searchTerm"/>
                     <ImportLocalMod :search-term="searchTerm"/>
+                    <InstallFromGitHub :search-term="searchTerm"/>
+                    <ProfileSyncSetting :search-term="searchTerm"/>
                 </SettingsSection>
 
                 <SettingsSection v-if="isVisible('Appearance')" :name="t('translations.pages.settings.nav.categories.appearance')">
@@ -133,6 +138,7 @@ function isVisible(section: Category): boolean {
 
                 <SettingsSection v-if="isVisible('Other')" :name="t('translations.pages.settings.nav.categories.other')">
                     <OnlineModList :search-term="searchTerm"/>
+                    <GitHubAccount :search-term="searchTerm"/>
                 </SettingsSection>
             </div>
         </div>

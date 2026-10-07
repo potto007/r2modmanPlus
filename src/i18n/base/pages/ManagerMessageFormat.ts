@@ -48,6 +48,7 @@ export type ManagerMessageFormat = {
             labels: {
                 deprecated: string;
                 disabled: string;
+                github: string;
             },
             display: {
                 byline: string;
@@ -59,6 +60,8 @@ export type ManagerMessageFormat = {
             },
             tooltips: {
                 updateAvailable: string;
+                githubUpdateAvailable: string;
+                github: string;
                 dependencyIssue: string;
                 disable: string;
                 enable: string;
@@ -72,6 +75,7 @@ export type ManagerMessageFormat = {
                 associated: string;
                 openWebsite: string;
                 update: string;
+                updateFromGithub: string;
                 downloadDependency: string;
                 enableSpecific: string
                 donate: string;

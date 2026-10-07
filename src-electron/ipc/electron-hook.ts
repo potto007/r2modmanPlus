@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, shell, clipboard } from 'electron';
+import { BrowserWindow, ipcMain, shell, clipboard, safeStorage } from 'electron';
 
 export function hookElectronIpc(browserWindow: BrowserWindow) {
     ipcMain.on('electron:shell:openExternal', (event, url) => {
@@ -21,4 +21,16 @@ export function hookElectronIpc(browserWindow: BrowserWindow) {
     ipcMain.handle('electron:getEnvironmentVariables', (event) => {
         return JSON.stringify(process.env);
     })
+
+    ipcMain.handle('electron:safeStorage:isAvailable', () => {
+        return safeStorage.isEncryptionAvailable();
+    });
+
+    ipcMain.handle('electron:safeStorage:encryptString', (event, value: string) => {
+        return safeStorage.encryptString(value).toString('base64');
+    });
+
+    ipcMain.handle('electron:safeStorage:decryptString', (event, value: string) => {
+        return safeStorage.decryptString(Buffer.from(value, 'base64'));
+    });
 }

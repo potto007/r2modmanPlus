@@ -49,7 +49,8 @@ export const ManagerTranslation: ManagerMessageFormat = {
         localModCard: {
             labels: {
                 deprecated: 'Deprecated',
-                disabled: 'Disabled'
+                disabled: 'Disabled',
+                github: 'GitHub',
             },
             display: {
                 byline: 'v{version} by {author}',
@@ -61,6 +62,8 @@ export const ManagerTranslation: ManagerMessageFormat = {
             },
             tooltips: {
                 updateAvailable: 'An update is available',
+                githubUpdateAvailable: 'A newer GitHub release is available: {tag}',
+                github: 'Installed from GitHub release {tag} of {repository}',
                 dependencyIssue: 'There is an issue with the dependencies for this mod',
                 disable: 'Disable',
                 enable: 'Enable',
@@ -74,6 +77,7 @@ export const ManagerTranslation: ManagerMessageFormat = {
                 associated: 'Associated',
                 openWebsite: 'Website',
                 update: 'Update',
+                updateFromGithub: 'Update to {tag}',
                 downloadDependency: 'Download dependency',
                 enableSpecific: 'Enable {dependencyName}',
                 donate: 'Donate',

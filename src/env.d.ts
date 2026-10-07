@@ -68,6 +68,9 @@ declare global {
             openExternal: (path: string) => void;
             selectFile: (path: string) => void;
             getEnvironmentVariables: () => Promise<string>;
+            isSecretStorageAvailable: () => Promise<boolean>;
+            encryptSecret: (value: string) => Promise<string>;
+            decryptSecret: (value: string) => Promise<string>;
         }
     }
 }

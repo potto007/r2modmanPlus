@@ -14,6 +14,8 @@
         <DownloadModVersionSelectModal />
         <UpdateAllInstalledModsModal />
         <ConcerningPackageReviewModal/>
+        <GitHubModImportModal/>
+        <ProfileSyncModal/>
         <LaunchTypeModal v-if="canRenderLaunchTypeModal()" />
 
         <div class="router-view">
@@ -42,6 +44,8 @@ import LaunchTypeModal from "../components/modals/launch-type/LaunchTypeModal.vu
 import appWindow from '../providers/node/app/app_window';
 import ManagerActivityBar from '../components/navigation/ManagerActivityBar.vue';
 import ConcerningPackageReviewModal from '@r2/components/modals/ConcerningPackageReviewModal.vue';
+import GitHubModImportModal from '@r2/components/modals/GitHubModImportModal.vue';
+import ProfileSyncModal from '@r2/components/modals/ProfileSyncModal.vue';
 import { useModFiltersComposable } from '@r2/components/composables/ModFiltersComposable';
 
 const store = getStore<State>();

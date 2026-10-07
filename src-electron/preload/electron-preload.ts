@@ -34,3 +34,15 @@ export function copyToClipboard(value: string) {
 export async function getEnvironmentVariables() {
     return ipcRenderer.invoke('electron:getEnvironmentVariables');
 }
+
+export async function isSecretStorageAvailable(): Promise<boolean> {
+    return ipcRenderer.invoke('electron:safeStorage:isAvailable');
+}
+
+export async function encryptSecret(value: string): Promise<string> {
+    return ipcRenderer.invoke('electron:safeStorage:encryptString', value);
+}
+
+export async function decryptSecret(value: string): Promise<string> {
+    return ipcRenderer.invoke('electron:safeStorage:decryptString', value);
+}

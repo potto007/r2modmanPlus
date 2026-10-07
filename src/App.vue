@@ -64,6 +64,8 @@ import { DataFolderProvider } from './providers/ror2/system/DataFolderProvider';
 import { DataFolderProviderImpl } from './r2mm/system/DataFolderProviderImpl';
 import InteractionProvider from './providers/ror2/system/InteractionProvider';
 import InteractionProviderImpl from './r2mm/system/InteractionProviderImpl';
+import SecretStorageProvider from './providers/generic/secret/SecretStorageProvider';
+import ElectronSecretStorage from './r2mm/system/ElectronSecretStorage';
 import ZipProvider from './providers/generic/zip/ZipProvider';
 import AdmZipProvider from './providers/generic/zip/AdmZipProvider';
 import ManagerSettingsMigration from './r2mm/manager/ManagerSettingsMigration';
@@ -126,6 +128,7 @@ ProfileInstallerProvider.provide(() => new GenericProfileInstaller());
 LoggerProvider.provide(() => new Logger());
 LinkProvider.provide(() => new LinkImpl());
 InteractionProvider.provide(() => new InteractionProviderImpl());
+SecretStorageProvider.provide(() => new ElectronSecretStorage());
 DataFolderProvider.provide(() => new DataFolderProviderImpl());
 
 PlatformInterceptorProvider.provide(() => new PlatformInterceptorImpl());

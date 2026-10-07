@@ -177,18 +177,23 @@ export default class ProfileModList {
         return this.getModList(profile);
     }
 
-    private static async createExport(profile: ImmutableProfile): Promise<ZipBuilder | R2Error> {
+    /** The export.r2x manifest for a profile, as YAML. */
+    public static async createExportManifest(profile: ImmutableProfile): Promise<string | R2Error> {
         const list: ManifestV2[] | R2Error = await this.getModList(profile);
         if (list instanceof R2Error) {
             return list;
         }
         const exportModList: ExportMod[] = list.map((manifestMod: ManifestV2) => ExportMod.fromManifest(manifestMod));
         const exportFormat = new ExportFormat(profile.getProfileName(), exportModList);
-        const builder = ZipProvider.instance.zipBuilder();
-        await builder.addBuffer("export.r2x", Buffer.from(stringifyYaml(exportFormat)));
-        if (await FsProvider.instance.exists(profile.joinToProfilePath("BepInEx", "config"))) {
-            await builder.addFolder("config", profile.joinToProfilePath('BepInEx', 'config'));
-        }
+        return stringifyYaml(exportFormat);
+    }
+
+    /**
+     * Loose files included in an export besides the BepInEx/config folder:
+     * every supported config file in the profile tree, minus loader
+     * internals. Entry names are relative to the profile root.
+     */
+    public static async getExportFileList(profile: ImmutableProfile): Promise<{ entryName: string, diskPath: string }[] | R2Error> {
         const tree = await FileTree.buildFromLocation(profile.getProfilePath());
         if (tree instanceof R2Error) {
             return tree;
@@ -207,17 +212,37 @@ export default class ProfileModList {
             gdWeaveDir.removeDirectories("mods");
             gdWeaveDir.removeFiles("GDWeave.log");
         }, "GDWeave");
-        // Add all tree contents to buffer.
+        const files: { entryName: string, diskPath: string }[] = [];
         for (const file of tree.getRecursiveFiles()) {
             const fileLower = file.toLowerCase();
             if (
                 this.SUPPORTED_CONFIG_FILE_EXTENSIONS.some(value => fileLower.endsWith(value)) &&
                 !fileLower.endsWith('mods.yml')
             ) {
-                const content = await FsProvider.instance.readFile(file);
-                const bufferContent = Buffer.from(content, 'utf8');
-                await builder.addBuffer(path.relative(profile.getProfilePath(), file), bufferContent);
+                files.push({ entryName: path.relative(profile.getProfilePath(), file), diskPath: file });
             }
+        }
+        return files;
+    }
+
+    public static async createExport(profile: ImmutableProfile): Promise<ZipBuilder | R2Error> {
+        const manifestYaml = await this.createExportManifest(profile);
+        if (manifestYaml instanceof R2Error) {
+            return manifestYaml;
+        }
+        const builder = ZipProvider.instance.zipBuilder();
+        await builder.addBuffer("export.r2x", Buffer.from(manifestYaml));
+        if (await FsProvider.instance.exists(profile.joinToProfilePath("BepInEx", "config"))) {
+            await builder.addFolder("config", profile.joinToProfilePath('BepInEx', 'config'));
+        }
+        const files = await this.getExportFileList(profile);
+        if (files instanceof R2Error) {
+            return files;
+        }
+        for (const file of files) {
+            const content = await FsProvider.instance.readFile(file.diskPath);
+            const bufferContent = Buffer.from(content, 'utf8');
+            await builder.addBuffer(file.entryName, bufferContent);
         }
         return builder;
     }

@@ -241,4 +241,32 @@ export default class ManagerSettings {
         ManagerSettings.CONTEXT.global.locale = locale;
         await this.save();
     }
+
+    /** Sealed token as stored; use GitHubAuth to get the plaintext. */
+    public getSealedGitHubToken(): string | null {
+        return ManagerSettings.CONTEXT.global.githubToken ?? null;
+    }
+
+    public async setSealedGitHubToken(sealedToken: string | null) {
+        ManagerSettings.CONTEXT.global.githubToken = sealedToken;
+        await this.save();
+    }
+
+    public getProfileSyncRepository(): string | null {
+        return ManagerSettings.CONTEXT.global.profileSyncRepository ?? null;
+    }
+
+    public async setProfileSyncRepository(repository: string | null) {
+        ManagerSettings.CONTEXT.global.profileSyncRepository = repository;
+        await this.save();
+    }
+
+    public getPullProfileBeforeLaunch(): boolean {
+        return ManagerSettings.CONTEXT.global.pullProfileBeforeLaunch ?? false;
+    }
+
+    public async setPullProfileBeforeLaunch(enabled: boolean) {
+        ManagerSettings.CONTEXT.global.pullProfileBeforeLaunch = enabled;
+        await this.save();
+    }
 }

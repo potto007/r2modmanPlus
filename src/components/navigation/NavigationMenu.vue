@@ -106,6 +106,7 @@ import {
     throwIfNoGameDir
  } from '../../utils/LaunchUtils';
 import { ref, computed } from 'vue';
+import ProfileSync from '../../r2mm/sync/ProfileSync';
 import { getStore } from '../../providers/generic/store/StoreProvider';
 import { State } from '../../store';
 import { useRouter } from 'vue-router';
@@ -133,6 +134,13 @@ async function launchGame(mode: LaunchMode) {
     try {
         await setGameDirIfUnset(activeGame.value);
         await throwIfNoGameDir(activeGame.value);
+
+        if (mode === LaunchMode.MODDED && store.getters['settings'].getPullProfileBeforeLaunch()) {
+            const syncState = await ProfileSync.readState(profile.value.asImmutableProfile());
+            if (syncState !== null) {
+                await store.dispatch('profileSync/pullIfRemoteChanged');
+            }
+        }
 
         if (mode === LaunchMode.MODDED) {
             await linkProfileFiles(activeGame.value, profile.value.asImmutableProfile());

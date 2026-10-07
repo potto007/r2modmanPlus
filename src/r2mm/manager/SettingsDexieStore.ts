@@ -123,6 +123,9 @@ export default class SettingsDexieStore extends Dexie {
                 gameSelectionViewMode: GameSelectionViewMode.CARD,
                 previewPanelWidth: 450,
                 locale: 'en',
+                githubToken: null,
+                profileSyncRepository: null,
+                pullProfileBeforeLaunch: false,
             },
             gameSpecific: {
                 version: 2,
@@ -213,6 +216,11 @@ export interface ManagerSettingsInterfaceGlobal_V2 {
     gameSelectionViewMode: GameSelectionViewMode;
     previewPanelWidth: number;
     locale: string;
+    /** Sealed by SecretStorageProvider; null when not configured. */
+    githubToken?: string | null;
+    /** "owner/name" of the repository that stores synced profiles. */
+    profileSyncRepository?: string | null;
+    pullProfileBeforeLaunch?: boolean;
 }
 
 /**

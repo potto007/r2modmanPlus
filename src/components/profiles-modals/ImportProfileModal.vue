@@ -36,7 +36,7 @@ const profileImportCode = ref<string>('');
 const targetProfileName = ref<string>('');
 const profileImportFilePath = ref<string | null>(null);
 const profileImportContent = ref<ExportFormat | null>(null);
-const profileMods = ref<{known: ThunderstoreCombo[], unknown: string[]}>({known: [], unknown: []});
+const profileMods = ref<ProfileUtils.ResolvedExportMods>({known: [], unknown: [], github: []});
 const isPartialImportAllowed = ref<boolean>(false);
 
 type ActiveStep =
@@ -55,6 +55,8 @@ const isOpen = computed(() => store.state.modals.isImportProfileModalOpen);
 const profileList = computed(() => store.state.profiles.profileList);
 const knownProfileMods = computed(() => profileMods.value.known.map((combo) => combo.getMod()));
 const unknownProfileModNames = computed(() => profileMods.value.unknown.join(', '));
+const githubProfileModNames = computed(() => profileMods.value.github.map((m) => `${m.getName()} (${m.getGitHubSource()!.repository} @ ${m.getGitHubSource()!.tag})`).join(', '));
+const installableModCount = computed(() => knownProfileMods.value.length + profileMods.value.github.length);
 const isProfileCodeValid = computed(() => VALID_PROFILE_CODE_REGEX.test(profileImportCode.value));
 const profileTotalDownloadSize = ref<number>(0);
 
@@ -70,7 +72,7 @@ function closeModal() {
     profileImportCode.value = '';
     profileImportFilePath.value = null;
     profileImportContent.value = null;
-    profileMods.value = {known: [], unknown: []};
+    profileMods.value = {known: [], unknown: [], github: []};
     store.commit('closeImportProfileModal');
 }
 
@@ -391,18 +393,23 @@ function onContentOrPathNotSet() {
             </h2>
         </template>
         <template v-slot:body>
-            <div v-if="knownProfileMods.length === 0 || profileMods.unknown.length > 0" class="notification is-warning">
+            <div v-if="installableModCount === 0 || profileMods.unknown.length > 0" class="notification is-warning">
                 <p>
                     {{ t('translations.modals.importProfile.states.reviewImport.content.notFoundDisclaimer') }}
                 </p>
                 <p class="margin-top">{{ unknownProfileModNames }}</p>
 
-                <p v-if="knownProfileMods.length === 0" class="margin-top">
+                <p v-if="installableModCount === 0" class="margin-top">
                     {{ t('translations.modals.importProfile.states.reviewImport.content.ensureCorrectProfile') }}
                 </p>
             </div>
 
-            <p v-if="knownProfileMods.length > 0 && profileMods.unknown.length > 0" class="margin-bottom">
+            <div v-if="profileMods.github.length > 0" class="notification is-info">
+                <p>{{ t('translations.modals.importProfile.states.reviewImport.content.githubPackages') }}</p>
+                <p class="margin-top">{{ githubProfileModNames }}</p>
+            </div>
+
+            <p v-if="installableModCount > 0 && profileMods.unknown.length > 0" class="margin-bottom">
                 {{ t('translations.modals.importProfile.states.reviewImport.content.packagesWillBeInstalled') }}
             </p>
             <OnlineModList
@@ -413,7 +420,7 @@ function onContentOrPathNotSet() {
         </template>
         <template v-slot:footer>
 
-            <div v-if="knownProfileMods.length > 0 && profileMods.unknown.length > 0" class="is-flex-grow-1">
+            <div v-if="installableModCount > 0 && profileMods.unknown.length > 0" class="is-flex-grow-1">
                 <input
                     v-model="isPartialImportAllowed"
                     id="partialImportAllowedCheckbox"
@@ -429,7 +436,7 @@ function onContentOrPathNotSet() {
                 id="modal-review-confirmed"
                 ref="reviewConfirmedButton"
                 class="button is-info"
-                :disabled="knownProfileMods.length === 0 || (profileMods.unknown.length > 0 && !isPartialImportAllowed)"
+                :disabled="installableModCount === 0 || (profileMods.unknown.length > 0 && !isPartialImportAllowed)"
                 @click="onProfileReviewConfirmed"
             >
                 {{ t('translations.modals.importProfile.states.reviewImport.actions.proceed') }}

@@ -15,12 +15,25 @@ import ProfileInstallerProvider from "../providers/ror2/installing/ProfileInstal
 import * as PackageDb from '../r2mm/manager/PackageDexieStore';
 import ProfileModList from "../r2mm/mods/ProfileModList";
 import { wasDownloadedFromOnline } from './DownloadUtils';
+import GitHubModSource from '../model/github/GitHubModSource';
+import GitHubModInstaller from '../r2mm/github/GitHubModInstaller';
+
+export interface ResolvedExportMods {
+    /** Mods found on Thunderstore. */
+    known: ThunderstoreCombo[];
+    /** Dependency strings of mods neither on Thunderstore nor on GitHub. */
+    unknown: string[];
+    /** Mods that will be installed from a GitHub release. */
+    github: ExportMod[];
+}
 
 export async function exportModsToCombos(
     exportMods: ExportMod[],
     game: Game
-): Promise<{known: ThunderstoreCombo[], unknown: string[]}> {
-    const allDependencyStrings = exportMods.map((m) => m.getDependencyString());
+): Promise<ResolvedExportMods> {
+    const github = exportMods.filter((m) => m.isFromGitHub());
+    const thunderstoreMods = exportMods.filter((m) => !m.isFromGitHub());
+    const allDependencyStrings = thunderstoreMods.map((m) => m.getDependencyString());
     const known = await PackageDb.getCombosByDependencyStrings(game, allDependencyStrings);
     const knownDependencyStrings = known.map((c) => c.getDependencyString());
     let unknown: string[] = [];
@@ -32,7 +45,7 @@ export async function exportModsToCombos(
     }
 
     unknown.sort();
-    return {known, unknown};
+    return {known, unknown, github};
 }
 
 async function extractConfigsToImportedProfile(
@@ -186,7 +199,8 @@ export async function parseYamlToExportFormat(yamlContent: string) {
                 new VersionNumber(
                     `${mod.version.major}.${mod.version.minor}.${mod.version.patch}`
                 ),
-                enabled
+                enabled,
+                GitHubModSource.fromJsObject(mod.githubSource)
             );
         })
     );
@@ -218,6 +232,10 @@ export async function populateImportedProfile(
     try {
         const disabledMods = exportModList.filter((m) => !m.isEnabled()).map((m) => m.getName());
         await installModsToProfile(comboList, profile, disabledMods, progressCallback);
+        const githubMods = exportModList.filter((m) => m.isFromGitHub());
+        if (githubMods.length > 0) {
+            await GitHubModInstaller.installExportMods(githubMods, profile, progressCallback);
+        }
         await extractConfigsToImportedProfile(zipPath, profile.getProfileName(), progressCallback);
     } catch (e) {
         await FileUtils.recursiveRemoveDirectoryIfExists(profile.getProfilePath());

@@ -28,6 +28,10 @@ export interface State {
     isLaunchArgumentsModalOpen: boolean;
     concerningModToReview: ManifestV2 | null;
     isConcerningModReviewModalOpen: boolean;
+    isGitHubModImportModalOpen: boolean;
+    /** Prefilled repository for the GitHub import modal (update flow). */
+    githubModImportRepository: string | null;
+    isProfileSyncModalOpen: boolean;
 }
 
 export default {
@@ -58,6 +62,9 @@ export default {
         isLaunchArgumentsModalOpen: false,
         concerningModToReview: null,
         isConcerningModReviewModalOpen: false,
+        isGitHubModImportModalOpen: false,
+        githubModImportRepository: null,
+        isProfileSyncModalOpen: false,
     }),
 
     mutations: {
@@ -211,6 +218,24 @@ export default {
 
         openLocalFileImportModal: function(state: State): void {
             state.isLocalFileImportModalOpen = true;
+        },
+
+        openGitHubModImportModal: function(state: State, repository?: string): void {
+            state.githubModImportRepository = repository || null;
+            state.isGitHubModImportModalOpen = true;
+        },
+
+        closeGitHubModImportModal: function(state: State): void {
+            state.isGitHubModImportModalOpen = false;
+            state.githubModImportRepository = null;
+        },
+
+        openProfileSyncModal: function(state: State): void {
+            state.isProfileSyncModalOpen = true;
+        },
+
+        closeProfileSyncModal: function(state: State): void {
+            state.isProfileSyncModalOpen = false;
         },
 
         openIncorrectGameDirectoryModal: function(state: State): void {
