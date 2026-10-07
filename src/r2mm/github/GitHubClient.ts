@@ -47,6 +47,8 @@ export class GitHubApiError extends R2Error {
     constructor(status: number, name: string, message: string, solution: string | null = null) {
         super(name, message, solution);
         this.status = status;
+        // R2Error pins the prototype to itself; restore ours so instanceof works.
+        Object.setPrototypeOf(this, GitHubApiError.prototype);
     }
 }
 
@@ -60,8 +62,11 @@ export function parseRepository(input: string): GitHubRepositoryRef {
     const parts = withoutScheme.split('/').filter((p) => p.length > 0);
     const owner = parts[0];
     const name = parts[1] ? parts[1].replace(/\.git$/i, '') : undefined;
-    const valid = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*)$/;
-    if (!owner || !name || !valid.test(owner) || !valid.test(name)) {
+    // GitHub user and organisation names allow letters, digits and hyphens
+    // only, so a leftover host name such as "gitlab.com" fails here.
+    const validOwner = /^[A-Za-z0-9](?:[A-Za-z0-9-]*)$/;
+    const validName = /^[A-Za-z0-9_.](?:[A-Za-z0-9._-]*)$/;
+    if (!owner || !name || !validOwner.test(owner) || !validName.test(name)) {
         throw new R2Error(
             'Invalid GitHub repository',
             `"${input}" is not a GitHub repository reference.`,

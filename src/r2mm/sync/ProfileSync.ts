@@ -56,6 +56,8 @@ export class RemoteProfileExistsError extends R2Error {
             'Overwrite the remote profile with this one, or replace this profile with the remote one.'
         );
         this.remoteSha = remoteSha;
+        // R2Error pins the prototype to itself; restore ours so instanceof works.
+        Object.setPrototypeOf(this, RemoteProfileExistsError.prototype);
     }
 }
 
@@ -67,6 +69,7 @@ export class SyncConflictError extends R2Error {
             'The remote profile was updated since this profile was last synced, and this profile also has local changes.',
             'Push to overwrite the remote with your changes, or pull to replace your changes with the remote.'
         );
+        Object.setPrototypeOf(this, SyncConflictError.prototype);
     }
 }
 

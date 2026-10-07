@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import SettingsViewWrapper from '../SettingsViewWrapper.vue';
 import { useSettingSearch } from '../../composables/SettingSearchComposable';
@@ -21,6 +21,10 @@ const pullBeforeLaunch = ref<boolean>(false);
 
 onMounted(async () => {
     pullBeforeLaunch.value = store.getters['settings'].getPullProfileBeforeLaunch();
+    await store.dispatch('profileSync/loadLocalState');
+});
+
+watch(() => store.getters['profile/activeProfileName'], async () => {
     await store.dispatch('profileSync/loadLocalState');
 });
 
